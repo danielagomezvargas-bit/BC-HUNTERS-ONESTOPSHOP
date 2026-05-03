@@ -68,12 +68,30 @@ export default function WizardShell() {
   const [savedCount, setSavedCount] = useState(0);
 
   function handleGuardarPropuesta() {
+    // Save benchmark records (only real rates)
     const records = buildBenchmarkRecords(wiz);
     if (records.length > 0) {
       const existing: BenchmarkRecord[] = JSON.parse(localStorage.getItem("benchmark_records") || "[]");
       localStorage.setItem("benchmark_records", JSON.stringify([...existing, ...records]));
       setSavedCount(records.length);
     }
+
+    // Save one pager summary (all data for the PDF/Excel export)
+    const summary = {
+      negocio:       wiz.negocio,
+      productos:     wiz.productos,
+      comPT_OT:      wiz.comPT_OT,
+      comPT_MSI:     wiz.comPT_MSI,
+      tpvPT:         wiz.sharePT.tpv,
+      comOP_OT:      wiz.comOP_OT,
+      comOP_MSI:     wiz.comOP_MSI,
+      tpvOP:         wiz.shareOP.tpv,
+      propuestaProd: wiz.propuestaProd,
+      palancasSel:   { pt: Array.from(wiz.palancasSel.pt), op: Array.from(wiz.palancasSel.op) },
+      palancasPct:   wiz.palancasPct,
+    };
+    localStorage.setItem("simulator_summary", JSON.stringify(summary));
+
     setDone(true);
   }
 
@@ -94,13 +112,20 @@ export default function WizardShell() {
                 No se guardaron tasas en el benchmark porque ningún proveedor indicó tasas reales en el Paso 3.
               </p>
             )}
-            <div style={{ display:"flex", gap:12, justifyContent:"center" }}>
-              <a href="/benchmark" style={{
+            <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
+              <a href="/simulator/summary" style={{
                 display:"inline-block", padding:"11px 28px",
                 background:COLORS.blue, color:"#fff",
                 borderRadius:8, fontWeight:700, fontSize:14, textDecoration:"none",
               }}>
-                Ver benchmark →
+                📄 Ver resumen de monetización
+              </a>
+              <a href="/benchmark" style={{
+                display:"inline-block", padding:"11px 28px",
+                background:COLORS.navy, color:"#fff",
+                borderRadius:8, fontWeight:700, fontSize:14, textDecoration:"none",
+              }}>
+                📈 Ver benchmark
               </a>
               <a href="/simulator" style={{
                 display:"inline-block", padding:"11px 28px",
@@ -108,7 +133,7 @@ export default function WizardShell() {
                 border:`1px solid ${COLORS.border}`,
                 borderRadius:8, fontWeight:700, fontSize:14, textDecoration:"none",
               }}>
-                Nueva propuesta
+                + Nueva propuesta
               </a>
             </div>
           </div>

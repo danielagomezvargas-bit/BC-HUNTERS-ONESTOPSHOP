@@ -34,7 +34,7 @@ function sumOT(ot: Record<string, number>): number {
   return Object.values(ot).reduce((a, b) => a + (b || 0), 0);
 }
 function sumMSI(msi: Record<string, number>, active: Set<MsiPlazo>): number {
-  return [...active].reduce((a, p) => a + (msi[p] || 0), 0);
+  return Array.from(active).reduce((a, p) => a + (msi[p] || 0), 0);
 }
 
 // ── Upload banner ─────────────────────────────────────────────
@@ -112,7 +112,7 @@ function ShareSection({ sec, share, setShare, provData, provCounts, simLoaded, e
 }) {
   const medios = sec === "pt" ? MEDIOS_PT_OT : MEDIOS_OP_OT;
   const provName = getProvName(sec, provData, provCounts);
-  const otSum = sumOT(share.ot as Record<string, number>);
+  const otSum = sumOT(share.ot as unknown as Record<string, number>);
   const msiSum = sumMSI(share.msi, share.msiActive);
   const total = otSum + msiSum;
   const ok = Math.abs(total - 100) < 1.5;
@@ -135,7 +135,7 @@ function ShareSection({ sec, share, setShare, provData, provCounts, simLoaded, e
     setShare(p => ({ ...p, tpv: val }));
   }
 
-  const activeMSI = [...share.msiActive].sort((a, b) => parseInt(a) - parseInt(b));
+  const activeMSI = Array.from(share.msiActive).sort((a, b) => parseInt(a) - parseInt(b));
 
   return (
     <div style={{ border:`1px solid ${C.border}`, borderRadius:10, overflow:"hidden", marginBottom:24 }}>
@@ -240,7 +240,7 @@ function ShareSection({ sec, share, setShare, provData, provCounts, simLoaded, e
               {activeMSI.length === 0
                 ? <tr><td colSpan={3} style={{ padding:"16px 14px", textAlign:"center", fontSize:11, color:C.muted }}>Sin plazos seleccionados</td></tr>
                 : activeMSI.map(p => {
-                    const pct = share.msi[p] || 0;
+                    const pct = (share.msi as Record<string, number>)[p] || 0;
                     const vol = share.tpv * pct / 100;
                     return (
                       <tr key={p} style={{ height:40, borderBottom:`1px solid #F2F2F2` }}>

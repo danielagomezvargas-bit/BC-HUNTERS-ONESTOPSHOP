@@ -165,8 +165,8 @@ export default function BenchmarkDashboard() {
   }, []);
 
   // Derived
-  const allHunters = [...new Set(records.map(r => r.hunter).filter(Boolean))].sort();
-  const allProvs   = [...new Set(records.map(r => r.proveedor).filter(Boolean))].sort();
+  const allHunters = Array.from(new Set(records.map(r => r.hunter).filter(Boolean))).sort();
+  const allProvs   = Array.from(new Set(records.map(r => r.proveedor).filter(Boolean))).sort();
 
   const filtered = records.filter(r => {
     if (fInd    !== "Todas" && r.industria !== fInd)    return false;
@@ -300,7 +300,7 @@ export default function BenchmarkDashboard() {
       td_mp: avv(recs.map(r => r.tasas_mp?.td)),
       tc_mp: avv(recs.map(r => r.tasas_mp?.tc)),
     };
-  }).filter(Boolean) as NonNullable<ReturnType<typeof benchInd[0]>>[];
+  }).filter(Boolean) as Array<{ industria:string; count:number; td:number|null; tc:number|null; amex:number|null; intl:number|null; td_mp:number|null; tc_mp:number|null }>;
 
   const benchProv = allProvs.map(prov => {
     const recs = filtered.filter(r => r.proveedor === prov);
@@ -338,7 +338,7 @@ export default function BenchmarkDashboard() {
     if (porDef)   lines.push(`⏳ ${pctOf(porDef, total)} sin definir`);
     const conRazon = perdidos.filter(r => r.razon_perdida).slice(0, 2);
     if (conRazon.length) lines.push(`📋 Razones de pérdida: ${conRazon.map(r => r.razon_perdida).join(" · ")}`);
-    const hunters = [...new Set(filtered.map(r => r.hunter).filter(Boolean))];
+    const hunters = Array.from(new Set(filtered.map(r => r.hunter).filter(Boolean)));
     if (hunters.length) lines.push(`👤 ${hunters.length} hunter${hunters.length > 1 ? "s" : ""} con propuestas registradas`);
     return lines.join("\n");
   })();
@@ -423,7 +423,7 @@ export default function BenchmarkDashboard() {
             {/* KPIs */}
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:18 }}>
               {[
-                { lbl:"Total propuestas",       val:<span style={{ fontSize:28, fontWeight:700, color:C.blue }}>{total}</span>,  sub:`${allHunters.length} hunters · ${[...new Set(filtered.map(r=>r.industria))].length} industrias`, top:"none" },
+                { lbl:"Total propuestas",       val:<span style={{ fontSize:28, fontWeight:700, color:C.blue }}>{total}</span>,  sub:`${allHunters.length} hunters · ${Array.from(new Set(filtered.map(r=>r.industria))).length} industrias`, top:"none" },
                 { lbl:"Tasa de éxito",          val:<span style={{ fontSize:24, fontWeight:700, color:C.green }}>{pctOf(ganados,total)}</span>, sub:"propuestas ganadas", top:`3px solid ${C.green}` },
                 { lbl:"Com. TD prom. actual",   val:<span style={{ fontSize:24, fontWeight:700, color:C.amber }}>{fmtPct(avv(filtered.map(r=>r.tasas?.td)))}</span>, sub:"benchmark mercado", top:`3px solid ${C.amber}` },
                 { lbl:"Com. TD prom. MP",       val:<span style={{ fontSize:24, fontWeight:700, color:C.green }}>{fmtPct(avv(filtered.map(r=>r.tasas_mp?.td)))}</span>, sub:"vs solución actual", top:`3px solid ${C.green}` },
@@ -568,7 +568,7 @@ export default function BenchmarkDashboard() {
                   </tr>
                   {benchInd.length === 0
                     ? <tr><td colSpan={8} style={{ ...TD, textAlign:"center", color:"#888" }}>Sin datos para los filtros seleccionados</td></tr>
-                    : benchInd.map(row => (
+                    : benchInd.map((row: { industria:string; count:number; td:number|null; tc:number|null; amex:number|null; intl:number|null; td_mp:number|null; tc_mp:number|null }) => (
                       <tr key={row.industria}>
                         <td style={{ ...TD, fontWeight:600 }}>{row.industria}</td>
                         <td style={{ ...TD, textAlign:"center" }}><span style={badge(C.blue,"#E6F6FD")}>{row.count}</span></td>
