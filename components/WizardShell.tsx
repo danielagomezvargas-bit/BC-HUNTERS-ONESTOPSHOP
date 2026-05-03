@@ -7,7 +7,7 @@ import Step2_Producto from "@/components/steps/Step2_Producto";
 import Step3_Proveedores from "@/components/steps/Step3_Proveedores";
 import Step4_Share from "@/components/steps/Step4_Share";
 import Step5_Comisiones from "@/components/steps/Step5_Comisiones";
-// import Step6_Propuesta from "@/components/steps/Step6_Propuesta";
+import Step6_Propuesta from "@/components/steps/Step6_Propuesta";
 import { COLORS } from "@/data/constants";
 
 const ComingSoon = ({ label }: { label: string }) => (
@@ -63,7 +63,21 @@ export default function WizardShell() {
       sharePT={wiz.sharePT} shareOP={wiz.shareOP}
       onNext={goNext} onBack={goBack}
     />,
-    <ComingSoon label="Propuesta de valor — Paso 6" />,
+    <Step6_Propuesta
+      productos={wiz.productos}
+      provData={wiz.provData}
+      provCounts={wiz.provCounts}
+      sharePT={wiz.sharePT}
+      shareOP={wiz.shareOP}
+      propuestaProd={wiz.propuestaProd}
+      setPropuestaProd={wiz.setPropuestaProd}
+      palancasSel={wiz.palancasSel}
+      togglePalanca={wiz.togglePalanca}
+      palancasPct={wiz.palancasPct}
+      setPalancaPct={wiz.setPalancaPct}
+      onNext={goNext}
+      onBack={goBack}
+    />,
   ];
 
   return (
