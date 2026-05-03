@@ -99,7 +99,13 @@ const LBL: React.CSSProperties = {
 // ─────────────────────────────────────────────────────────────
 export default function BenchmarkDashboard() {
   const [tab, setTab]       = useState<"dashboard"|"tasas"|"lista"|"add"|"upload">("dashboard");
-  const [records, setRecords] = useState<BenchmarkRecord[]>(SEED);
+  const [records, setRecords] = useState<BenchmarkRecord[]>(() => {
+    if (typeof window === "undefined") return SEED;
+    const saved = localStorage.getItem("benchmark_records");
+    const extra: BenchmarkRecord[] = saved ? JSON.parse(saved) : [];
+    const seedIds = new Set(SEED.map(r => r.id));
+    return [...SEED, ...extra.filter(r => !seedIds.has(r.id))];
+  });
 
   // Filters
   const [fInd,    setFInd]    = useState("Todas");
