@@ -5,8 +5,8 @@ import Stepper from "@/components/ui/Stepper";
 import Step1_Datos from "@/components/steps/Step1_Datos";
 import Step2_Producto from "@/components/steps/Step2_Producto";
 import Step3_Proveedores from "@/components/steps/Step3_Proveedores";
-// import Step4_Share from "@/components/steps/Step4_Share";
-// import Step5_Comisiones from "@/components/steps/Step5_Comisiones";
+import Step4_Share from "@/components/steps/Step4_Share";
+import Step5_Comisiones from "@/components/steps/Step5_Comisiones";
 // import Step6_Propuesta from "@/components/steps/Step6_Propuesta";
 import { COLORS } from "@/data/constants";
 
@@ -43,8 +43,26 @@ export default function WizardShell() {
       onNext={goNext}
       onBack={goBack}
     />,
-    <ComingSoon label="Share de pagos — Paso 4" />,
-    <ComingSoon label="Comisiones — Paso 5" />,
+    <Step4_Share
+      productos={wiz.productos}
+      provData={wiz.provData}
+      provCounts={wiz.provCounts}
+      sharePT={wiz.sharePT} setSharePT={wiz.setSharePT}
+      shareOP={wiz.shareOP} setShareOP={wiz.setShareOP}
+      simLoaded={wiz.simLoaded} setSimLoaded={wiz.setSimLoaded}
+      onNext={goNext} onBack={goBack}
+    />,
+    <Step5_Comisiones
+      productos={wiz.productos}
+      provData={wiz.provData}
+      provCounts={wiz.provCounts}
+      comPT_OT={wiz.comPT_OT} comPT_MSI={wiz.comPT_MSI}
+      comOP_OT={wiz.comOP_OT} comOP_MSI={wiz.comOP_MSI}
+      updateComOT={wiz.updateComOT} updateComMSI={wiz.updateComMSI}
+      tcActual={wiz.tcActual} tcMP={wiz.tcMP}
+      sharePT={wiz.sharePT} shareOP={wiz.shareOP}
+      onNext={goNext} onBack={goBack}
+    />,
     <ComingSoon label="Propuesta de valor — Paso 6" />,
   ];
 
