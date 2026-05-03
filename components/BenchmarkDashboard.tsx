@@ -228,18 +228,27 @@ export default function BenchmarkDashboard() {
       msiOut[p]   = e.active && e.sb   ? { ba:tcBase,   sb:+e.sb    } : null;
       msiMpOut[p] = e.active && e.sb_mp? { ba:tcMpBase, sb:+e.sb_mp } : null;
     });
+    const today = new Date().toISOString().slice(0,10);
+    const sellerKey = form.seller.trim().toLowerCase();
+    const rfcKey    = form.rfc.trim().toLowerCase();
+    const existing  = records.find(r =>
+      (rfcKey && r.rfc.toLowerCase() === rfcKey) ||
+      r.seller.toLowerCase() === sellerKey
+    );
     const rec: BenchmarkRecord = {
-      id: "s"+Date.now(),
+      id: existing ? existing.id : "s"+Date.now(),
       seller: form.seller.trim(), rfc: form.rfc.trim(),
       industria: form.industria, producto: form.producto, proveedor: form.proveedor,
       tpv: +form.tpv, ticket: +form.ticket, hunter: form.hunter.trim(),
       tasas: { td:+form.tasas.td, tc:+form.tasas.tc, amex:form.tasas.amex?+form.tasas.amex:null, intl:form.tasas.intl?+form.tasas.intl:null },
       tasas_mp: { td:form.tasas_mp.td?+form.tasas_mp.td:null, tc:form.tasas_mp.tc?+form.tasas_mp.tc:null, amex:form.tasas_mp.amex?+form.tasas_mp.amex:null, intl:form.tasas_mp.intl?+form.tasas_mp.intl:null },
       msi: msiOut, msi_mp: msiMpOut,
-      status:"por_definir", fecha: new Date().toISOString().slice(0,10),
+      status: existing ? existing.status : "por_definir",
+      fecha: existing ? existing.fecha : today,
+      updatedAt: existing ? today : undefined,
       razon_perdida: form.razon_perdida || null,
     };
-    const u = [...records, rec];
+    const u = existing ? records.map(r => r.id === existing.id ? rec : r) : [...records, rec];
     setRecords(u); persist(u);
     setForm(emptyForm); setFErr({});
     setSaved(true);
@@ -502,7 +511,11 @@ export default function BenchmarkDashboard() {
                       const st = getSt(r.status);
                       return (
                         <tr key={r.id} style={{ background:"#fff" }}>
-                          <td style={TD}><div style={{ fontWeight:700 }}>{r.seller}</div>{r.rfc&&<div style={{ fontSize:10,color:"#888" }}>{r.rfc}</div>}</td>
+                          <td style={TD}>
+                            <div style={{ fontWeight:700 }}>{r.seller}</div>
+                            {r.rfc&&<div style={{ fontSize:10,color:"#888" }}>{r.rfc}</div>}
+                            {r.updatedAt&&<div style={{ fontSize:9,color:"#fff",background:"#B45309",borderRadius:4,padding:"1px 5px",display:"inline-block",marginTop:2,fontWeight:700 }}>Actualizado {r.updatedAt.split("-").reverse().join("/")}</div>}
+                          </td>
                           <td style={{ ...TD, fontSize:11 }}>{r.industria}</td>
                           <td style={{ ...TD, fontSize:11 }}>{r.proveedor}</td>
                           <td style={{ ...TD, fontWeight:600 }}>{fmx(r.tpv)}</td>
@@ -653,7 +666,11 @@ export default function BenchmarkDashboard() {
                     const st = getSt(r.status);
                     return (
                       <tr key={r.id}>
-                        <td style={{ ...TD, fontWeight:700 }}>{r.seller}{r.rfc&&<div style={{ fontSize:9,color:"#888" }}>{r.rfc}</div>}</td>
+                        <td style={{ ...TD, fontWeight:700 }}>
+                          {r.seller}
+                          {r.rfc&&<div style={{ fontSize:9,color:"#888" }}>{r.rfc}</div>}
+                          {r.updatedAt&&<div style={{ fontSize:9,color:"#fff",background:"#B45309",borderRadius:4,padding:"1px 5px",display:"inline-block",marginTop:2,fontWeight:700 }}>Actualizado {r.updatedAt.split("-").reverse().join("/")}</div>}
+                        </td>
                         <td style={{ ...TD, fontSize:11 }}>{r.industria}</td>
                         <td style={TD}><span style={badge(r.producto==="Point"?C.navy:C.green,r.producto==="Point"?"#E6F0F5":"#E6F5ED")}>{r.producto==="Point"?"🖥":"🌐"}</span></td>
                         <td style={{ ...TD, fontSize:11 }}>{r.proveedor}</td>

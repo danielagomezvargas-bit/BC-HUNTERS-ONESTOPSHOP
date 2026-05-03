@@ -72,8 +72,23 @@ export default function WizardShell() {
     const records = buildBenchmarkRecords(wiz);
     if (records.length > 0) {
       const existing: BenchmarkRecord[] = JSON.parse(localStorage.getItem("benchmark_records") || "[]");
-      localStorage.setItem("benchmark_records", JSON.stringify([...existing, ...records]));
-      setSavedCount(records.length);
+      const today = new Date().toISOString().slice(0, 10);
+      let merged = [...existing];
+      let savedCount = 0;
+      for (const rec of records) {
+        const idx = merged.findIndex(r =>
+          (rec.rfc && r.rfc.toLowerCase() === rec.rfc.toLowerCase()) ||
+          r.seller.toLowerCase() === rec.seller.toLowerCase()
+        );
+        if (idx >= 0) {
+          merged[idx] = { ...rec, id: merged[idx].id, status: merged[idx].status, fecha: merged[idx].fecha, updatedAt: today };
+        } else {
+          merged.push(rec);
+        }
+        savedCount++;
+      }
+      localStorage.setItem("benchmark_records", JSON.stringify(merged));
+      setSavedCount(savedCount);
     }
 
     // Save one pager summary (all data for the PDF/Excel export)

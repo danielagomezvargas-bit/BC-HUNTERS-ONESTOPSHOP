@@ -93,5 +93,6 @@ export interface BenchmarkRecord {
   msi_mp: Record<MsiPlazo, { ba: number; sb: number } | null>;
   status: StatusId;
   fecha: string;
+  updatedAt?: string;
   razon_perdida: string | null;
 }
