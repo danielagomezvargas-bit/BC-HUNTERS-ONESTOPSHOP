@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWizard } from "@/hooks/useWizard";
 import Topbar from "@/components/ui/Topbar";
 import Stepper from "@/components/ui/Stepper";
@@ -66,6 +66,12 @@ export default function WizardShell() {
   const { step, goNext, goBack, negocio, productos } = wiz;
   const [done, setDone] = useState(false);
   const [savedCount, setSavedCount] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [step, done]);
 
   function handleGuardarPropuesta() {
     // Save benchmark records (only real rates)
@@ -218,8 +224,8 @@ export default function WizardShell() {
   return (
     <div style={{ fontFamily:"'IBM Plex Sans', -apple-system, sans-serif", background:COLORS.bg, minHeight:"100vh" }}>
       <Topbar negocio={negocio} productos={productos} />
-      <div style={{ maxWidth:920, margin:"20px auto", padding:"0 20px 40px" }}>
-        <div style={{ background:"#fff", border:`1px solid ${COLORS.border}`, borderRadius:10, padding:"22px 24px" }}>
+      <div style={{ maxWidth:960, margin:"28px auto", padding:"0 20px 56px" }}>
+        <div style={{ background:"#fff", border:`1px solid ${COLORS.border}`, borderRadius:12, padding:"32px 36px" }}>
           <Stepper currentStep={step} />
           {steps[step]}
         </div>

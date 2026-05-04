@@ -6,15 +6,15 @@ export const COLORS = {
   green: "#00A650",
   amber: "#B45309",
   red:   "#E53935",
-  border:"#E0E0E0",
-  bg:    "#F4F6FA",
+  border:"#E5E7EB",
+  bg:    "#F8F9FB",
   white: "#fff",
   muted: "#6B7280",
   text:  "#1A1A2E",
-  lb:    "#E6F6FD",
-  lg:    "#E6F5ED",
-  la:    "#FEF3DA",
-  lr:    "#FEE8EA",
+  lb:    "#F4FAFD",
+  lg:    "#F2F9F5",
+  la:    "#FFF8E8",
+  lr:    "#FDF2F3",
 } as const;
 
 export const INDUSTRIES: string[] = [
