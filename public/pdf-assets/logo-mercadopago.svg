@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="Mercado Pago">
+  <rect width="240" height="64" fill="#FFFFFF" rx="6"></rect>
+  <g transform="translate(10 10)">
+    <circle cx="22" cy="22" r="22" fill="#3483FA"></circle>
+    <path d="M12 28 Q 22 14 32 28" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-linecap="round"></path>
+    <circle cx="22" cy="21" r="3.5" fill="#FFFFFF"></circle>
+  </g>
+  <text x="66" y="40" font-family="Inter, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#3483FA" letter-spacing="-0.5">
+    mercado<tspan fill="#1A1A1A" font-weight="400">pago</tspan>
+  </text>
+</svg>

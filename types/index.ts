@@ -68,12 +68,22 @@ export interface ComMSIRow {
 }
 
 // ── Paso 6 — Propuesta de valor ─────────────────────────────────
+export type PalancaCategory = "producto" | "innovacion" | "marketing";
+
+export interface PalancaSuboption {
+  id: string;
+  label: string;
+  defaultPct: number;
+}
+
 export interface Palanca {
   id: string;
   label: string;
+  desc?: string;
   icon: string;
-  bench: string;
-  benchPct: number;
+  range: string;
+  category?: PalancaCategory;
+  suboptions?: PalancaSuboption[];
 }
 
 // ── Benchmark DB ─────────────────────────────────────────────────

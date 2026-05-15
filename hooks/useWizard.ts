@@ -123,8 +123,35 @@ export function useWizard() {
     setPalancasPct(prev => ({ ...prev, [sec]: { ...prev[sec], [id]: val } }));
   }, []);
 
+  // ── Mock seeder ──────────────────────────────────────────────
+  const loadSellerMuestra = useCallback(() => {
+    setNegocio({ nombre:"Hospital Auna", rfc:"SEM010123AB1", industria:"Salud / Clínicas", logo:"/logo-hospital-auna.svg", bdu:null });
+    setProductos({ point:true, op:true });
+    setProvCounts({ pt:1, op:1 });
+    setProvData({ pt_0:{ bank:"Proveedor Actual", rates:"si" }, op_0:{ bank:"Proveedor Actual", rates:"si" } });
+    setSharePT(p => ({ ...p, tpv:10_000_000 }));
+    setShareOP(p => ({ ...p, tpv:1_000_000 }));
+    setComPT_OT([
+      { l:"T. Débito",    sh:0.29, cu:3.0, mp:2.0 },
+      { l:"T. Crédito",   sh:0.59, cu:3.0, mp:2.0 },
+      { l:"AMEX",         sh:0.04, cu:3.0, mp:2.0 },
+      { l:"Internacional",sh:0.02, cu:3.0, mp:2.0 },
+    ]);
+    setComOP_OT([
+      { l:"T. Débito",       sh:0.29, cu:3.0, mp:2.0 },
+      { l:"T. Crédito",      sh:0.41, cu:3.0, mp:2.0 },
+      { l:"AMEX",            sh:0.13, cu:3.0, mp:2.0 },
+      { l:"Internacional",   sh:0.03, cu:3.0, mp:2.0 },
+      { l:"OXXO",            sh:0.02, cu:3.0, mp:2.0 },
+      { l:"Red PayCash",     sh:0.02, cu:3.0, mp:2.0 },
+      { l:"Dep. y Transf.",  sh:0.04, cu:3.0, mp:2.0 },
+      { l:"AM & MP Crédito", sh:0.00, cu:3.0, mp:2.0 },
+    ]);
+    setPropuestaProd("both");
+  }, []);
+
   // ── Navigation ───────────────────────────────────────────────
-  const goNext = useCallback(() => setStep(s => Math.min(s + 1, 5)), []);
+  const goNext = useCallback(() => setStep(s => Math.min(s + 1, 6)), []);
   const goBack = useCallback(() => setStep(s => Math.max(s - 1, 0)), []);
   const goTo   = useCallback((n: number) => setStep(n), []);
 
@@ -142,5 +169,6 @@ export function useWizard() {
     propuestaProd, setPropuestaProd,
     palancasSel, togglePalanca,
     palancasPct, setPalancaPct,
+    loadSellerMuestra,
   };
 }

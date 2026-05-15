@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useWizard } from "@/hooks/useWizard";
 import Topbar from "@/components/ui/Topbar";
 import Stepper from "@/components/ui/Stepper";
@@ -9,6 +9,7 @@ import Step3_Proveedores from "@/components/steps/Step3_Proveedores";
 import Step4_Share from "@/components/steps/Step4_Share";
 import Step5_Comisiones from "@/components/steps/Step5_Comisiones";
 import Step6_Propuesta from "@/components/steps/Step6_Propuesta";
+import Step7_Resultado from "@/components/steps/Step7_Resultado";
 import { COLORS } from "@/data/constants";
 import type { BenchmarkRecord, MsiPlazo } from "@/types";
 
@@ -64,14 +65,12 @@ function buildBenchmarkRecords(wiz: ReturnType<typeof useWizard>): BenchmarkReco
 export default function WizardShell() {
   const wiz = useWizard();
   const { step, goNext, goBack, negocio, productos } = wiz;
-  const [done, setDone] = useState(false);
-  const [savedCount, setSavedCount] = useState(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [step, done]);
+  }, [step]);
 
   function handleGuardarPropuesta() {
     // Save benchmark records (only real rates)
@@ -79,8 +78,7 @@ export default function WizardShell() {
     if (records.length > 0) {
       const existing: BenchmarkRecord[] = JSON.parse(localStorage.getItem("benchmark_records") || "[]");
       const today = new Date().toISOString().slice(0, 10);
-      let merged = [...existing];
-      let savedCount = 0;
+      const merged = [...existing];
       for (const rec of records) {
         const idx = merged.findIndex(r =>
           (rec.rfc && r.rfc.toLowerCase() === rec.rfc.toLowerCase()) ||
@@ -91,10 +89,8 @@ export default function WizardShell() {
         } else {
           merged.push(rec);
         }
-        savedCount++;
       }
       localStorage.setItem("benchmark_records", JSON.stringify(merged));
-      setSavedCount(savedCount);
     }
 
     // Save one pager summary (all data for the PDF/Excel export)
@@ -113,97 +109,59 @@ export default function WizardShell() {
     };
     localStorage.setItem("simulator_summary", JSON.stringify(summary));
 
-    setDone(true);
+    goNext();
   }
 
-  if (done) {
+  function EnConstruccion({ num, onNext, onBack, isFirst }: { num: number; onNext: () => void; onBack?: () => void; isFirst?: boolean }) {
     return (
-      <div style={{ fontFamily:"'IBM Plex Sans', -apple-system, sans-serif", background:COLORS.bg, minHeight:"100vh" }}>
-        <Topbar negocio={negocio} productos={productos} />
-        <div style={{ maxWidth:920, margin:"60px auto", padding:"0 20px", textAlign:"center" }}>
-          <div style={{ background:"#fff", border:`1px solid ${COLORS.border}`, borderRadius:10, padding:"48px 32px" }}>
-            <div style={{ fontSize:52, marginBottom:16 }}>✅</div>
-            <h2 style={{ fontSize:22, fontWeight:700, color:COLORS.navy, marginBottom:8 }}>Propuesta generada</h2>
-            {savedCount > 0 ? (
-              <p style={{ fontSize:14, color:COLORS.muted, marginBottom:28 }}>
-                Se guardaron <strong>{savedCount}</strong> registro{savedCount > 1 ? "s" : ""} con tasas reales en el benchmark de Mercado Pago.
-              </p>
-            ) : (
-              <p style={{ fontSize:14, color:COLORS.muted, marginBottom:28 }}>
-                No se guardaron tasas en el benchmark porque ningún proveedor indicó tasas reales en el Paso 3.
-              </p>
-            )}
-            <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
-              <a href="/simulator/summary" style={{
-                display:"inline-block", padding:"11px 28px",
-                background:COLORS.blue, color:"#fff",
-                borderRadius:8, fontWeight:700, fontSize:14, textDecoration:"none",
-              }}>
-                📄 Ver resumen de monetización
-              </a>
-              <a href="/benchmark" style={{
-                display:"inline-block", padding:"11px 28px",
-                background:COLORS.navy, color:"#fff",
-                borderRadius:8, fontWeight:700, fontSize:14, textDecoration:"none",
-              }}>
-                📈 Ver benchmark
-              </a>
-              <a href="/simulator" style={{
-                display:"inline-block", padding:"11px 28px",
-                background:"#fff", color:COLORS.navy,
-                border:`1px solid ${COLORS.border}`,
-                borderRadius:8, fontWeight:700, fontSize:14, textDecoration:"none",
-              }}>
-                + Nueva propuesta
-              </a>
-            </div>
+      <div style={{ textAlign: "center", padding: "56px 32px" }}>
+        <div style={{ fontSize: 44, marginBottom: 12 }}>🚧</div>
+        <h3 style={{ fontSize: 18, fontWeight: 700, color: COLORS.navy, marginBottom: 6 }}>
+          Paso {num} — En construcción
+        </h3>
+        <p style={{ fontSize: 13, color: COLORS.muted, marginBottom: 32 }}>
+          Fernando está trabajando en este paso.
+        </p>
+        {isFirst && (
+          <div style={{ marginBottom: 20 }}>
+            <button
+              onClick={() => { wiz.loadSellerMuestra(); wiz.goTo(5); }}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "11px 28px", borderRadius: 8, fontWeight: 700, fontSize: 13,
+                background: "#FFE600", color: COLORS.navy, border: "none", cursor: "pointer",
+                boxShadow: "0 2px 8px rgba(0,0,0,.12)",
+              }}
+            >
+              ⚡ Cargar Seller Muestra → ir al Paso 6
+            </button>
+            <p style={{ fontSize: 11, color: COLORS.muted, marginTop: 8 }}>
+              Point $10M · OP $1M · Tasas 3% actual → 2% MP
+            </p>
           </div>
+        )}
+        <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+          {onBack && (
+            <button onClick={onBack} style={{
+              padding: "10px 24px", borderRadius: 8, fontWeight: 700, fontSize: 13,
+              background: "#fff", color: COLORS.navy, border: `1px solid ${COLORS.border}`, cursor: "pointer",
+            }}>← Atrás</button>
+          )}
+          <button onClick={onNext} style={{
+            padding: "10px 24px", borderRadius: 8, fontWeight: 700, fontSize: 13,
+            background: COLORS.navy, color: "#fff", border: "none", cursor: "pointer",
+          }}>Siguiente →</button>
         </div>
       </div>
     );
   }
 
   const steps = [
-    <Step1_Datos
-      negocio={wiz.negocio}
-      setNegocio={wiz.setNegocio}
-      onNext={goNext}
-    />,
-    <Step2_Producto
-      productos={wiz.productos}
-      setProductos={wiz.setProductos}
-      onNext={goNext}
-      onBack={goBack}
-    />,
-    <Step3_Proveedores
-      productos={wiz.productos}
-      provCounts={wiz.provCounts}
-      setProvCounts={wiz.setProvCounts}
-      provData={wiz.provData}
-      updateProvData={wiz.updateProvData}
-      onNext={goNext}
-      onBack={goBack}
-    />,
-    <Step4_Share
-      productos={wiz.productos}
-      provData={wiz.provData}
-      provCounts={wiz.provCounts}
-      sharePT={wiz.sharePT} setSharePT={wiz.setSharePT}
-      shareOP={wiz.shareOP} setShareOP={wiz.setShareOP}
-      simLoaded={wiz.simLoaded} setSimLoaded={wiz.setSimLoaded}
-      onNext={goNext} onBack={goBack}
-    />,
-    <Step5_Comisiones
-      productos={wiz.productos}
-      provData={wiz.provData}
-      provCounts={wiz.provCounts}
-      comPT_OT={wiz.comPT_OT} comPT_MSI={wiz.comPT_MSI}
-      comOP_OT={wiz.comOP_OT} comOP_MSI={wiz.comOP_MSI}
-      updateComOT={wiz.updateComOT} updateComMSI={wiz.updateComMSI}
-      tcActual={wiz.tcActual} tcMP={wiz.tcMP}
-      sharePT={wiz.sharePT} shareOP={wiz.shareOP}
-      onNext={goNext} onBack={goBack}
-    />,
+    <EnConstruccion num={1} onNext={goNext} isFirst />,
+    <EnConstruccion num={2} onNext={goNext} onBack={goBack} />,
+    <EnConstruccion num={3} onNext={goNext} onBack={goBack} />,
+    <EnConstruccion num={4} onNext={goNext} onBack={goBack} />,
+    <EnConstruccion num={5} onNext={goNext} onBack={goBack} />,
     <Step6_Propuesta
       productos={wiz.productos}
       provData={wiz.provData}
@@ -219,17 +177,36 @@ export default function WizardShell() {
       onNext={handleGuardarPropuesta}
       onBack={goBack}
     />,
+    <Step7_Resultado
+      negocio={wiz.negocio}
+      productos={wiz.productos}
+      sharePT={wiz.sharePT}
+      shareOP={wiz.shareOP}
+      comPT_OT={wiz.comPT_OT}
+      comPT_MSI={wiz.comPT_MSI}
+      comOP_OT={wiz.comOP_OT}
+      comOP_MSI={wiz.comOP_MSI}
+      palancasSel={wiz.palancasSel}
+      palancasPct={wiz.palancasPct}
+      onBack={goBack}
+    />,
   ];
 
   return (
+    <>
     <div style={{ fontFamily:"'IBM Plex Sans', -apple-system, sans-serif", background:COLORS.bg, minHeight:"100vh" }}>
-      <Topbar negocio={negocio} productos={productos} />
-      <div style={{ maxWidth:960, margin:"28px auto", padding:"0 20px 56px" }}>
+      <Topbar
+        negocio={negocio}
+        productos={productos}
+        onReset={() => { window.location.href = "/"; }}
+      />
+      <div style={{ maxWidth:1280, margin:"28px auto", padding:"0 20px 56px" }}>
         <div style={{ background:"#fff", border:`1px solid ${COLORS.border}`, borderRadius:12, padding:"32px 36px" }}>
-          <Stepper currentStep={step} />
+          <Stepper currentStep={step} onGoTo={wiz.goTo} />
           {steps[step]}
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -1,0 +1,219 @@
+/* =========================================================================
+   Andes X — Design Tokens
+   Colors, typography, spacing, radii, shadows, semantic variables.
+   Proxima Nova — Mercado Libre / Mercado Pago's house face — is loaded via
+   fonts.css, which lives next to this file. Any prototype that links
+   colors_and_type.css inherits the font automatically.
+   ========================================================================= */
+
+@import url("fonts.css");
+
+:root {
+  /* ================== COLORS ================== */
+
+  /* Brand — Mercado Pago rebrand (Abril 2026): primario pasa a amarillo.
+     Se unifica con Mercado Libre sobre el mismo amarillo #FFE600. */
+  --andes-yellow-mp:        #FFE600;   /* Mercado Pago — NUEVO primario */
+  --andes-yellow-mp-hover:  #E6CF00;
+  --andes-yellow-mp-active: #B8A500;
+  --andes-yellow-mp-tint:   #FFF9CC;
+
+  /* Alias retrocompatibles: el token histórico `--andes-blue-mp*` ahora
+     apunta al amarillo para no romper composiciones existentes. */
+  --andes-blue-mp:          var(--andes-yellow-mp);
+  --andes-blue-mp-hover:    var(--andes-yellow-mp-hover);
+  --andes-blue-mp-active:   var(--andes-yellow-mp-active);
+  --andes-blue-mp-tint:     var(--andes-yellow-mp-tint);
+
+  /* Mercado Libre (sin cambios) */
+  --andes-yellow-ml:        #FFE600;
+  --andes-yellow-ml-hover:  #E6CF00;
+  --andes-yellow-ml-tint:   #FFF9CC;
+
+  /* Color de interacción Andes X — azul-índigo.
+     Usado por Button Loud, Textlink, focus rings e Informative.
+     (El amarillo #FFE600 queda reservado para branding MP/ML, no CTAs.) */
+  --andes-blue-accent:      #434CE4;
+  --andes-blue-accent-hover:#353CB8;
+  --andes-blue-accent-tint: #ECEDFC;
+
+  /* Neutrals — 12 step ramp */
+  --andes-white:       #FFFFFF;
+  --andes-gray-040:    #F7F7F7;
+  --andes-gray-070:    #F0F0F0;
+  --andes-gray-100:    #EEEEEE;
+  --andes-gray-150:    #E5E5E5;   /* default border       */
+  --andes-gray-200:    #CCCCCC;
+  --andes-gray-300:    #B3B3B3;
+  --andes-gray-400:    #999999;
+  --andes-gray-500:    #737373;
+  --andes-gray-600:    #666666;
+  --andes-gray-800:    #333333;
+  --andes-gray-900:    #1A1A1A;
+  --andes-black:       #000000;
+
+  /* Semantic roles */
+  --andes-positive:        #00A650;
+  --andes-positive-hover:  #00873F;
+  --andes-positive-tint:   #E5F6EC;
+  --andes-negative:        #F23D4F;
+  --andes-negative-hover:  #C9293B;
+  --andes-negative-tint:   #FCE5E8;
+  --andes-caution:         #FFB800;
+  --andes-caution-tint:    #FFF4D6;
+  --andes-informative:     var(--andes-blue-accent);
+  --andes-informative-tint:var(--andes-blue-accent-tint);
+
+  /* Surfaces & text (semantic) */
+  --bg-primary:     var(--andes-white);
+  --bg-secondary:   var(--andes-gray-040);
+  --bg-tertiary:    var(--andes-gray-100);
+  --bg-inverse:     var(--andes-gray-900);
+
+  --fg-primary:     var(--andes-gray-900);   /* body text, titles     */
+  --fg-secondary:   var(--andes-gray-600);   /* supporting text       */
+  --fg-tertiary:    var(--andes-gray-400);   /* meta, timestamps      */
+  --fg-disabled:    var(--andes-gray-300);
+  --fg-inverse:     var(--andes-white);
+  --fg-link:        var(--andes-blue-accent);
+
+  --border-default: var(--andes-gray-150);
+  --border-strong:  var(--andes-gray-300);
+  --divider:        var(--andes-gray-100);
+
+  /* ================== TYPOGRAPHY ================== */
+  --font-family-base:
+      "Proxima Nova", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, Helvetica, Arial, sans-serif;
+  --font-family-condensed:
+      "Proxima Nova Condensed", "Proxima Nova", -apple-system, sans-serif;
+  --font-family-mono:
+      ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-semi:    600;
+  --font-weight-bold:    700;
+
+  /* Scale — matches Andes steps (Title L1/L2/L3, Body, Caption, Overline) */
+  --text-xs-size:        12px;  --text-xs-lh:        16px;
+  --text-s-size:         14px;  --text-s-lh:         20px;
+  --text-m-size:         16px;  --text-m-lh:         24px;   /* BODY */
+  --text-l-size:         18px;  --text-l-lh:         24px;
+  --text-xl-size:        20px;  --text-xl-lh:        28px;
+  --text-xxl-size:       24px;  --text-xxl-lh:       32px;
+  --text-title3-size:    28px;  --text-title3-lh:    36px;
+  --text-title2-size:    32px;  --text-title2-lh:    40px;
+  --text-title1-size:    40px;  --text-title1-lh:    48px;
+  --text-display-size:   56px;  --text-display-lh:   64px;
+
+  /* ================== SPACING ================== */
+  --space-xnano:   2px;
+  --space-nano:    4px;
+  --space-xsmall:  8px;
+  --space-small:  12px;
+  --space-medium: 16px;
+  --space-large:  24px;
+  --space-xlarge: 32px;
+  --space-huge:   40px;
+  --space-xhuge:  48px;
+  --space-xxhuge: 64px;
+
+  /* ================== RADII ================== */
+  --radius-2:   2px;
+  --radius-4:   4px;
+  --radius-6:   6px;   /* default buttons */
+  --radius-8:   8px;   /* cards           */
+  --radius-12: 12px;   /* bottom sheets   */
+  --radius-16: 16px;
+  --radius-full: 9999px;
+
+  /* ================== SHADOWS / ELEVATION ================== */
+  --shadow-flat:    none;
+  --shadow-raised:  0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-overlay: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --shadow-modal:   0 16px 40px rgba(0, 0, 0, 0.18);
+
+  /* ================== FOCUS ================== */
+  --focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--andes-blue-accent);
+
+  /* ================== ICON SIZES ================== */
+  --icon-micro:   12px;
+  --icon-xtiny:   16px;
+  --icon-tiny:    20px;
+  --icon-xsmall:  24px;
+  --icon-small:   32px;
+  --icon-medium:  40px;
+  --icon-large:   48px;
+
+  /* ================== MOTION ================== */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:   150ms;
+  --dur-base:   200ms;
+  --dur-slow:   300ms;
+}
+
+/* ==========================================================================
+   SEMANTIC TYPE CLASSES
+   ========================================================================== */
+html, body {
+  font-family: var(--font-family-base);
+  font-size: var(--text-m-size);
+  line-height: var(--text-m-lh);
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .andes-title-1 {
+  font-size: var(--text-title1-size);
+  line-height: var(--text-title1-lh);
+  font-weight: var(--font-weight-semi);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+h2, .andes-title-2 {
+  font-size: var(--text-title2-size);
+  line-height: var(--text-title2-lh);
+  font-weight: var(--font-weight-semi);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+h3, .andes-title-3 {
+  font-size: var(--text-title3-size);
+  line-height: var(--text-title3-lh);
+  font-weight: var(--font-weight-semi);
+  margin: 0;
+}
+h4, .andes-title-xl {
+  font-size: var(--text-xxl-size);
+  line-height: var(--text-xxl-lh);
+  font-weight: var(--font-weight-semi);
+  margin: 0;
+}
+.andes-title-l {
+  font-size: var(--text-xl-size);
+  line-height: var(--text-xl-lh);
+  font-weight: var(--font-weight-semi);
+}
+.andes-body-l { font-size: var(--text-l-size);  line-height: var(--text-l-lh); }
+.andes-body   { font-size: var(--text-m-size);  line-height: var(--text-m-lh); }
+.andes-body-s { font-size: var(--text-s-size);  line-height: var(--text-s-lh); }
+.andes-caption{ font-size: var(--text-xs-size); line-height: var(--text-xs-lh);
+                color: var(--fg-secondary); }
+.andes-overline{
+  font-size: var(--text-xs-size); line-height: var(--text-xs-lh);
+  font-weight: var(--font-weight-semi);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--fg-secondary);
+}
+.andes-money { font-variant-numeric: tabular-nums; }
+
+a, .andes-textlink {
+  color: var(--fg-link);
+  text-decoration: none;
+}
+a:hover, .andes-textlink:hover { text-decoration: underline; }
+
+code, pre, .andes-mono { font-family: var(--font-family-mono); }

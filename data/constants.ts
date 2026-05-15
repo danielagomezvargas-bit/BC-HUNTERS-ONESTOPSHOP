@@ -70,6 +70,7 @@ export const WIZARD_STEPS = [
   "Share de pagos",
   "Comisiones",
   "Propuesta de valor",
+  "Resultado",
 ] as const;
 
 export const MEDIOS_PT_OT = [
@@ -91,28 +92,93 @@ export const MEDIOS_OP_OT = [
 ] as const;
 
 export const PALANCAS_PT: Palanca[] = [
-  { id:"medios",    label:"Más medios de pago",          icon:"💳", bench:"↑ 5–15% conversión",     benchPct:10 },
-  { id:"msi-all",  label:"Todas las tarjetas en MSI",   icon:"📅", bench:"↑ 8–20% ticket promedio", benchPct:12 },
-  { id:"bnpl",     label:"BNPL",                        icon:"🔄", bench:"↑ 10–25% conversión",    benchPct:15 },
-  { id:"opciones", label:"Opciones de Pago",            icon:"⚙️", bench:"↑ 3–8% checkout",        benchPct:5  },
-  { id:"tarjetas", label:"Aceptación de Tarjetas",      icon:"💰", bench:"↑ 5–12% ventas",         benchPct:7  },
-  { id:"hotsale",  label:"Seasonal — Hot Sale",         icon:"🔥", bench:"↑ 20–40% en evento",     benchPct:30 },
-  { id:"buenfin",  label:"Seasonal — Buen Fin",         icon:"🛍", bench:"↑ 30–60% en evento",     benchPct:45 },
-  { id:"marketing",label:"Estrategias de Marketing",    icon:"📣", bench:"↑ 5–15% tráfico",        benchPct:8  },
-  { id:"cupones",  label:"Cupones",                     icon:"🎟", bench:"↑ 3–10% conversión",     benchPct:6  },
-  { id:"concilia", label:"Conciliación eficiente",      icon:"📊", bench:"↓ 2–5% errores",         benchPct:3  },
-  { id:"otro-pt",  label:"Otro",                        icon:"✏️", bench:"A definir por hunter",   benchPct:0  },
+  // ── Producto ────────────────────────────────────────────────
+  {
+    id: "mas-medios", label: "Más Medios de pago", icon: "card",
+    range: "0.01–0.5%", category: "producto",
+    desc: "No rechaces ningún tipo de cobro",
+    suboptions: [
+      { id: "valeras",   label: "Valeras",              defaultPct: 0.01 },
+      { id: "amex",      label: "Amex",                 defaultPct: 0.01 },
+      { id: "neobancos", label: "Neobancos",            defaultPct: 0.01 },
+      { id: "bienestar", label: "Bienestar",            defaultPct: 0.01 },
+      { id: "otros",     label: "Otros",                defaultPct: 0.5  },
+      { id: "todos",     label: "Todos los medios",     defaultPct: 0.5  },
+    ],
+  },
+  {
+    id: "msi", label: "MSIs", icon: "stack",
+    range: "0.01–0.5%", category: "producto",
+    desc: "Aceptar todos los bancos para MSIs",
+    suboptions: [
+      { id: "prosa",   label: "Prosa",                    defaultPct: 0.02 },
+      { id: "bbva",    label: "BBVA",                     defaultPct: 0.02 },
+      { id: "amex",    label: "AMEX",                     defaultPct: 0.01 },
+      { id: "aceptar", label: "Aceptar todos los bancos", defaultPct: 0.5  },
+      { id: "otro",    label: "Otro",                     defaultPct: 0.5  },
+    ],
+  },
+  {
+    id: "bnpl", label: "BNPL en tienda", icon: "refresh",
+    range: "0.1%", category: "producto",
+    desc: "Acepta Mercado Crédito y Account Money en tienda",
+    suboptions: [
+      { id: "mc", label: "Mercado Crédito", defaultPct: 0.1 },
+      { id: "am", label: "Account Money",  defaultPct: 0.1 },
+    ],
+  },
+  {
+    id: "link-pago", label: "Link de Pago", icon: "link",
+    range: "0.1%", category: "producto",
+    desc: "Cajeros y equipo de ventas envían links desde la terminal",
+  },
+  {
+    id: "ruteo", label: "Ruteo Inteligente", icon: "options",
+    range: "0.1%", category: "producto",
+    desc: "Las terminales definen la mejor ruta de pago automáticamente",
+  },
+  // ── Innovación ───────────────────────────────────────────────
+  {
+    id: "cuotas-interes", label: "Cuotas con Interés", icon: "bolt",
+    range: "0.5%", category: "innovacion",
+    desc: "Deslinda al seller del costo financiero y ofrece cuotas a clientes",
+  },
+  // ── Marketing ────────────────────────────────────────────────
+  {
+    id: "seasonals", label: "Seasonals", icon: "megaphone",
+    range: "0.5%", category: "marketing",
+    desc: "Campañas y promocionales en temporalidades clave",
+    suboptions: [
+      { id: "hot-sale", label: "Hot Sale",  defaultPct: 0.5 },
+      { id: "buen-fin", label: "Buen Fin",  defaultPct: 0.5 },
+    ],
+  },
+  {
+    id: "campanas-mensuales", label: "Campañas Mensuales", icon: "tag",
+    range: "0.5%", category: "marketing",
+    desc: "Descuentos y cupones una vez al mes",
+  },
+  {
+    id: "trafico", label: "Tráfico de Usuarios", icon: "chart",
+    range: "0.5%", category: "marketing",
+    desc: "Hub de beneficios y Landing Page para atraer clientes",
+  },
+  {
+    id: "material-pop", label: "Material POP", icon: "bag",
+    range: "0.5%", category: "marketing",
+    desc: "Material para promocionar opciones de pago en tiendas",
+  },
 ];
 
 export const PALANCAS_OP: Palanca[] = [
-  { id:"medios-op", label:"Más medios de pago",         icon:"💳", bench:"↑ 5–15% conversión",     benchPct:10 },
-  { id:"msi-op",    label:"Todas las tarjetas en MSI",  icon:"📅", bench:"↑ 8–20% ticket promedio", benchPct:12 },
-  { id:"bnpl-op",   label:"BNPL",                       icon:"🔄", bench:"↑ 10–25% conversión",    benchPct:15 },
-  { id:"opc-op",    label:"Opciones de Pago",           icon:"⚙️", bench:"↑ 3–8% checkout",        benchPct:5  },
-  { id:"tar-op",    label:"Aceptación de Tarjetas",     icon:"💰", bench:"↑ 5–12% ventas",         benchPct:7  },
-  { id:"hs-op",     label:"Seasonal — Hot Sale",        icon:"🔥", bench:"↑ 20–40% en evento",     benchPct:30 },
-  { id:"bf-op",     label:"Seasonal — Buen Fin",        icon:"🛍", bench:"↑ 30–60% en evento",     benchPct:45 },
-  { id:"mkt-op",    label:"Estrategias de Marketing",   icon:"📣", bench:"↑ 5–15% tráfico",        benchPct:8  },
-  { id:"cup-op",    label:"Cupones",                    icon:"🎟", bench:"↑ 3–10% conversión",     benchPct:6  },
-  { id:"otro-op",   label:"Otro",                       icon:"✏️", bench:"A definir por hunter",   benchPct:0  },
+  { id: "checkout-pro", label: "Checkout Pro",            icon: "globe",    range: "8–14% conversión"        },
+  { id: "smart-tokens", label: "Smart tokens",            icon: "key",      range: "2–5% aprobación"         },
+  { id: "subs",         label: "Suscripciones",           icon: "refresh",  range: "5–10% recurrencia"       },
+  { id: "msi-op",       label: "MSI Online",              icon: "stack",    range: "6–15% ticket"            },
+  { id: "antifraude",   label: "Antifraude avanzado",     icon: "shield",   range: "1–3% chargebacks ↓"     },
+  { id: "one-click",    label: "One-click",               icon: "bolt",     range: "10–18% recompra"         },
+  { id: "wallet",       label: "Wallet MP",               icon: "wallet",   range: "4–9% conversión"         },
+  { id: "links",        label: "Payment Links",           icon: "link",     range: "2–6% canales"            },
+  { id: "qr-online",    label: "QR Online",               icon: "qr",       range: "1–4% incremental"        },
+  { id: "otro-op",      label: "Otro",                    icon: "edit",     range: "Custom"                  },
 ];

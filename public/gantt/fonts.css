@@ -1,0 +1,13 @@
+/* Apunta a los fonts existentes en /pdf-assets/fonts/ */
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova-light.otf") format("opentype"); font-weight:300; font-style:normal; font-display:swap; }
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova-light-italic.otf") format("opentype"); font-weight:300; font-style:italic; font-display:swap; }
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova.otf") format("opentype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova-regular-italic.otf") format("opentype"); font-weight:400; font-style:italic; font-display:swap; }
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova-semibold-italic.otf") format("opentype"); font-weight:600; font-style:italic; font-display:swap; }
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova-bold.otf") format("opentype"); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova-bold-italic.otf") format("opentype"); font-weight:700; font-style:italic; font-display:swap; }
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova-extrabold.otf") format("opentype"); font-weight:800; font-style:normal; font-display:swap; }
+@font-face { font-family:"Proxima Nova"; src:url("/pdf-assets/fonts/proxima-nova-black.otf") format("opentype"); font-weight:900; font-style:normal; font-display:swap; }
+@font-face { font-family:"Proxima Nova Condensed"; src:url("/pdf-assets/fonts/proxima-nova-condensed-light.otf") format("opentype"); font-weight:300; font-style:normal; font-display:swap; }
+@font-face { font-family:"Proxima Nova Condensed"; src:url("/pdf-assets/fonts/proxima-nova-condensed.otf") format("opentype"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Proxima Nova Condensed"; src:url("/pdf-assets/fonts/proxima-nova-condensed-semibold.otf") format("opentype"); font-weight:600; font-style:normal; font-display:swap; }

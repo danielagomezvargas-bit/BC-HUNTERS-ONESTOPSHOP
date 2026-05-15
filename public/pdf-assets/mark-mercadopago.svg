@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Mercado Pago mark">
+  <circle cx="32" cy="32" r="32" fill="#3483FA"></circle>
+  <path d="M14 40 Q 32 18 50 40" stroke="#FFFFFF" stroke-width="4.5" fill="none" stroke-linecap="round"></path>
+  <circle cx="32" cy="30" r="5" fill="#FFFFFF"></circle>
+</svg>

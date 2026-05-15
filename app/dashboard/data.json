@@ -1,0 +1,98 @@
+[
+  {
+    "id": "1",
+    "cliente": "Elektra Reforma",
+    "segmento": "Retail",
+    "rfc": "ELE9801052R3",
+    "tdr": 2.4,
+    "gmv_estimado": 18500000,
+    "comision_estimada": 444000,
+    "propuesta_generada": "2026-04-10",
+    "status": "Enviada",
+    "vendedor": "Ana Torres"
+  },
+  {
+    "id": "2",
+    "cliente": "Farmacias del Ahorro",
+    "segmento": "Salud",
+    "rfc": "FDA8705143K1",
+    "tdr": 1.9,
+    "gmv_estimado": 32000000,
+    "comision_estimada": 608000,
+    "propuesta_generada": "2026-04-12",
+    "status": "En revisión",
+    "vendedor": "Carlos Mendez"
+  },
+  {
+    "id": "3",
+    "cliente": "Coppel Online",
+    "segmento": "E-commerce",
+    "rfc": "COP0201178P2",
+    "tdr": 2.8,
+    "gmv_estimado": 55000000,
+    "comision_estimada": 1540000,
+    "propuesta_generada": "2026-04-15",
+    "status": "Cerrada",
+    "vendedor": "Ana Torres"
+  },
+  {
+    "id": "4",
+    "cliente": "Sanborns",
+    "segmento": "Retail",
+    "rfc": "SAN7403218B4",
+    "tdr": 2.2,
+    "gmv_estimado": 9800000,
+    "comision_estimada": 215600,
+    "propuesta_generada": "2026-04-18",
+    "status": "Borrador",
+    "vendedor": "Luis Ramírez"
+  },
+  {
+    "id": "5",
+    "cliente": "Liverpool Digital",
+    "segmento": "E-commerce",
+    "rfc": "LIV5612093T7",
+    "tdr": 3.1,
+    "gmv_estimado": 78000000,
+    "comision_estimada": 2418000,
+    "propuesta_generada": "2026-04-20",
+    "status": "Enviada",
+    "vendedor": "Carlos Mendez"
+  },
+  {
+    "id": "6",
+    "cliente": "Oxxo Pay",
+    "segmento": "Conveniencia",
+    "rfc": "OXX9305187C9",
+    "tdr": 1.5,
+    "gmv_estimado": 120000000,
+    "comision_estimada": 1800000,
+    "propuesta_generada": "2026-04-22",
+    "status": "Cerrada",
+    "vendedor": "María López"
+  },
+  {
+    "id": "7",
+    "cliente": "Telcel Tienda",
+    "segmento": "Telco",
+    "rfc": "TEL9104215M5",
+    "tdr": 2.6,
+    "gmv_estimado": 44000000,
+    "comision_estimada": 1144000,
+    "propuesta_generada": "2026-04-25",
+    "status": "En revisión",
+    "vendedor": "Luis Ramírez"
+  },
+  {
+    "id": "8",
+    "cliente": "H&M México",
+    "segmento": "Fashion",
+    "rfc": "HYM0807294L2",
+    "tdr": 2.9,
+    "gmv_estimado": 22000000,
+    "comision_estimada": 638000,
+    "propuesta_generada": "2026-04-28",
+    "status": "Enviada",
+    "vendedor": "Ana Torres"
+  }
+]
