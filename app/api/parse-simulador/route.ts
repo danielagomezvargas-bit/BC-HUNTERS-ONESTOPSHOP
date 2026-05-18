@@ -1,34 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 
-// Converts a cell value to a percentage number (e.g. 0.0245 → 2.45, 2.45 → 2.45)
 function cellPct(cell: ExcelJS.Cell): number | null {
   const v = cell.value;
   let num: number | null = null;
-
   if (typeof v === "number") {
     num = v;
   } else if (v !== null && typeof v === "object" && "result" in (v as object)) {
     const r = (v as { result: unknown }).result;
     if (typeof r === "number") num = r;
   }
-
   if (num === null) return null;
-
-  // Excel stores % cells as decimals (0.0245 = 2.45%) with numFmt containing "%"
   const fmt = String((cell as any).numFmt ?? "");
-  if (fmt.includes("%") || (num > 0 && num < 1)) {
-    return Math.round(num * 10000) / 100;
-  }
+  if (fmt.includes("%") || (num > 0 && num < 1)) return Math.round(num * 10000) / 100;
   return Math.round(num * 100) / 100;
 }
 
-// Scans upward from a given row to detect whether we're in a Point or OP section
 function detectSection(sheet: ExcelJS.Worksheet, fromRow: number): "point" | "op" | null {
   for (let r = fromRow - 1; r >= Math.max(1, fromRow - 80); r--) {
-    const row = sheet.getRow(r);
     for (let c = 1; c <= 10; c++) {
-      const txt = String(row.getCell(c).value ?? "").trim().toLowerCase();
+      const txt = String(sheet.getRow(r).getCell(c).value ?? "").trim().toLowerCase();
       if (txt.includes("point")) return "point";
       if (txt.includes("online") || txt.includes("pagos en") || txt === "op") return "op";
     }
@@ -59,40 +50,59 @@ export async function POST(req: NextRequest) {
     let vc_op:         number | null = null;
     let vc_op_fila:    number | null = null;
 
-    // Step 1 — find which column carries the "VC (%) con DCC" header
-    // (the header row has text; the data rows have numbers in that same column)
-    let vcCol: number = 13; // default to col M
-    sheet.eachRow((row) => {
-      if (vcCol !== 13) return;
-      row.eachCell((cell, colNum) => {
-        const txt = String(cell.value ?? "").trim().toLowerCase();
-        if (txt.includes("vc") && txt.includes("dcc")) vcCol = colNum;
-      });
-    });
-
-    // Step 2 — scan every row for a numeric value in vcCol
-    // The header row is skipped automatically (it has text, not a number)
+    // ── Step 1: find column-M rows that say "VC" (text) ──────────────────────
+    // These are the section headers separating OP and Point tables.
+    // e.g. M40 = "VC" (OP header), M65 = "VC" (Point header)
+    const vcHeaderRows: number[] = [];
     sheet.eachRow((row, rowNum) => {
-      const val = cellPct(row.getCell(vcCol));
-      if (val === null || val <= 0 || val > 100) return;
-
-      const section = detectSection(sheet, rowNum);
-
-      if (section === "point" && vc_point === null) {
-        vc_point = val; vc_point_fila = rowNum;
-      } else if (section === "op" && vc_op === null) {
-        vc_op = val; vc_op_fila = rowNum;
-      } else if (section === null) {
-        // Fallback: OP section appears first (lower row number) in this sheet
-        if (vc_op === null)         { vc_op    = val; vc_op_fila    = rowNum; }
-        else if (vc_point === null) { vc_point = val; vc_point_fila = rowNum; }
+      const v = row.getCell(13).value;
+      if (typeof v === "string" && v.trim().toLowerCase() === "vc") {
+        vcHeaderRows.push(rowNum);
       }
     });
 
-    // Debug info: cells containing "vc" anywhere, and col M values for rows 10–95
+    if (vcHeaderRows.length >= 2) {
+      const sections = [
+        { start: vcHeaderRows[0], end: vcHeaderRows[1] - 1 },
+        { start: vcHeaderRows[1], end: vcHeaderRows[1] + 60 },
+      ].map((s, idx) => ({
+        ...s,
+        sec: (detectSection(sheet, s.start) ?? (idx === 0 ? "op" : "point")) as "op" | "point",
+      }));
+
+      for (const { start, end, sec } of sections) {
+        let val:  number | null = null;
+        let fila: number | null = null;
+
+        // First: explicit "VC + DCC" label in cols A–E (e.g. C85 "VC (%) con DCC")
+        search:
+        for (let r = start + 1; r <= end; r++) {
+          for (let c = 1; c <= 5; c++) {
+            const txt = String(sheet.getRow(r).getCell(c).value ?? "").trim().toLowerCase();
+            if (txt.includes("vc") && txt.includes("dcc")) {
+              const v = cellPct(sheet.getCell(r, 13));
+              if (v !== null) { val = v; fila = r; break search; }
+            }
+          }
+        }
+
+        // Fallback: last non-zero value in col M scanning backwards from end of section
+        // (the total row sits after the zero-value rows at the bottom of each section)
+        if (val === null) {
+          for (let r = end; r > start; r--) {
+            const v = cellPct(sheet.getCell(r, 13));
+            if (v !== null && v > 0 && v <= 100) { val = v; fila = r; break; }
+          }
+        }
+
+        if (sec === "op"    && vc_op    === null) { vc_op    = val; vc_op_fila    = fila; }
+        if (sec === "point" && vc_point === null) { vc_point = val; vc_point_fila = fila; }
+      }
+    }
+
+    // ── Debug info ────────────────────────────────────────────────────────────
     const dbgVcCells: { fila: number; col: string; texto: string }[] = [];
     const dbgColM:    { fila: number; valor: string; numFmt: string }[] = [];
-
     sheet.eachRow((row, rowNum) => {
       row.eachCell((cell, colNum) => {
         const txt = String(cell.value ?? "").trim();
@@ -102,9 +112,9 @@ export async function POST(req: NextRequest) {
         }
       });
       if (rowNum >= 10 && rowNum <= 95) {
-        const cell = row.getCell(13);
-        const raw  = cell.value;
-        let valor  = "";
+        const cell  = row.getCell(13);
+        const raw   = cell.value;
+        let valor   = "";
         if (typeof raw === "number") valor = String(raw);
         else if (raw !== null && typeof raw === "object" && "result" in (raw as object)) valor = String((raw as any).result);
         if (valor) dbgColM.push({ fila: rowNum, valor, numFmt: String((cell as any).numFmt ?? "") });
@@ -118,7 +128,7 @@ export async function POST(req: NextRequest) {
       vc_point_fila,
       vc_op,
       vc_op_fila,
-      _debug: { vcCol, dbgVcCells, dbgColM },
+      _debug: { vcHeaderRows, dbgVcCells, dbgColM },
     });
   } catch {
     return NextResponse.json(
