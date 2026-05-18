@@ -64,7 +64,8 @@ export async function POST(req: NextRequest) {
       let hasLabel = false;
       row.eachCell((cell) => {
         const txt = String(cell.value ?? "").trim().toLowerCase();
-        if (txt.includes("vc total con dc")) hasLabel = true;
+        // Matches "VC total con DC", "VC (%) con DCC", and future variants
+      if (txt.includes("vc") && txt.includes("dc")) hasLabel = true;
       });
       if (!hasLabel) return;
 

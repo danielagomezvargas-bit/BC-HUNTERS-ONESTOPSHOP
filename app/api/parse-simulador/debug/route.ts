@@ -40,11 +40,10 @@ export async function POST(req: NextRequest) {
     });
 
     // Rows that look like they could contain the VC label (filter for "vc" or "valor")
-    const vcRows = cells.filter(c =>
-      c.valor.toLowerCase().includes("vc") ||
-      c.valor.toLowerCase().includes("valor cliente") ||
-      c.valor.toLowerCase().includes("dc")
-    );
+    const vcRows = cells.filter(c => {
+      const t = c.valor.toLowerCase();
+      return (t.includes("vc") && t.includes("dc")) || t.includes("valor cliente");
+    });
 
     // Also return cols A–N for rows 40–95 to see the exact structure
     const rangeRows: { fila: number; cols: Record<string, string> }[] = [];
