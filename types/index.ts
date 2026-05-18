@@ -88,9 +88,12 @@ export interface Palanca {
 
 // ── Simulador cargado ────────────────────────────────────────────
 export interface SimuladorData {
-  fileName: string;
-  vc_point: number | null;
-  vc_op:    number | null;
+  fileName:      string;
+  sheetName:     string;
+  vc_point:      number | null;
+  vc_point_fila: number | null;
+  vc_op:         number | null;
+  vc_op_fila:    number | null;
 }
 
 // ── Benchmark DB ─────────────────────────────────────────────────
