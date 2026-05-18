@@ -65,7 +65,33 @@ export async function POST(req: NextRequest) {
       if (Object.keys(cols).length > 0) rangeRows.push({ fila: r, cols });
     }
 
-    return NextResponse.json({ sheetNames, vcRows, rangeRows });
+    // Dump full row content for header rows and first few data rows of each section
+    function dumpRow(rowNum: number) {
+      const result: Record<string, string> = {};
+      const row = sheet.getRow(rowNum);
+      for (let c = 1; c <= 20; c++) {
+        const cell = row.getCell(c);
+        const v = cell.value;
+        let txt = "";
+        if (typeof v === "string")  txt = v;
+        else if (typeof v === "number") txt = v.toString();
+        else if (v !== null && typeof v === "object" && "result" in (v as object)) txt = String((v as any).result);
+        if (txt.trim()) {
+          const letter = c <= 26 ? String.fromCharCode(64 + c) : `C${c}`;
+          result[letter] = txt.trim().slice(0, 60);
+        }
+      }
+      return result;
+    }
+
+    // Rows 38-45 (around OP header) and 63-72 (around Point header)
+    const structureDump: Record<string, Record<string, string>> = {};
+    for (const r of [38,39,40,41,42,43,44,45,46,47,48,63,64,65,66,67,68,69,70,71]) {
+      const d = dumpRow(r);
+      if (Object.keys(d).length > 0) structureDump[`fila_${r}`] = d;
+    }
+
+    return NextResponse.json({ sheetNames, vcRows, rangeRows, structureDump });
   } catch (e: any) {
     return NextResponse.json({ error: String(e?.message ?? e) }, { status: 500 });
   }
