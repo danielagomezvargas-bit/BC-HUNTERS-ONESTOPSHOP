@@ -60,11 +60,12 @@ export async function POST(req: NextRequest) {
     let vc_op_fila:    number | null = null;
 
     sheet.eachRow((row, rowNum) => {
-      // "DCC" uniquely identifies the total/weighted-average row across all payment methods
-      // Individual rows (TD, TC, AMEX…) do not carry "DCC" in their label
+      // The total/weighted-average row has BOTH "vc" and "dcc" in the same cell
+      // (e.g. "VC (%) con DCC"). Generic headers that only say "DCC" are skipped.
       let hasLabel = false;
       row.eachCell((cell) => {
-        if (String(cell.value ?? "").trim().toLowerCase().includes("dcc")) hasLabel = true;
+        const txt = String(cell.value ?? "").trim().toLowerCase();
+        if (txt.includes("vc") && txt.includes("dcc")) hasLabel = true;
       });
       if (!hasLabel) return;
 
