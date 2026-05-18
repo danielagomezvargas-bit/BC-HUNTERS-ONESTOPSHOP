@@ -60,16 +60,24 @@ export async function POST(req: NextRequest) {
     let vc_op_fila:    number | null = null;
 
     sheet.eachRow((row, rowNum) => {
-      // Look for any cell in this row whose text matches the VC label
+      // "DCC" uniquely identifies the total/weighted-average row across all payment methods
+      // Individual rows (TD, TC, AMEX…) do not carry "DCC" in their label
       let hasLabel = false;
       row.eachCell((cell) => {
-        const txt = String(cell.value ?? "").trim().toLowerCase();
-        // Matches "VC total con DC", "VC (%) con DCC", and future variants
-      if (txt.includes("vc") && txt.includes("dc")) hasLabel = true;
+        if (String(cell.value ?? "").trim().toLowerCase().includes("dcc")) hasLabel = true;
       });
       if (!hasLabel) return;
 
-      const val     = cellPct(sheet.getCell(rowNum, 13)); // col M = 13
+      // Try col M (13) first; if null scan the row for the first valid percentage
+      let val = cellPct(sheet.getCell(rowNum, 13));
+      if (val === null) {
+        row.eachCell((cell) => {
+          if (val !== null) return;
+          const p = cellPct(cell);
+          if (p !== null && p > 0 && p <= 100) val = p;
+        });
+      }
+
       const section = detectSection(sheet, rowNum);
 
       if (section === "point" && vc_point === null) {
@@ -77,7 +85,7 @@ export async function POST(req: NextRequest) {
       } else if (section === "op" && vc_op === null) {
         vc_op = val; vc_op_fila = rowNum;
       } else if (section === null) {
-        // Can't determine section — assign by row order (OP appears first)
+        // Can't determine section — assign by row order (OP appears first in the sheet)
         if (vc_op === null)         { vc_op    = val; vc_op_fila    = rowNum; }
         else if (vc_point === null) { vc_point = val; vc_point_fila = rowNum; }
       }
