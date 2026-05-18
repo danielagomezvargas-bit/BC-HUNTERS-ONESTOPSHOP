@@ -86,6 +86,13 @@ export interface Palanca {
   suboptions?: PalancaSuboption[];
 }
 
+// ── Simulador cargado ────────────────────────────────────────────
+export interface SimuladorData {
+  fileName: string;
+  vc_point: number | null;
+  vc_op:    number | null;
+}
+
 // ── Benchmark DB ─────────────────────────────────────────────────
 export interface BenchmarkRecord {
   id: string;

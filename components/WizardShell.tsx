@@ -157,7 +157,13 @@ export default function WizardShell() {
   }
 
   const steps = [
-    <EnConstruccion num={1} onNext={goNext} isFirst />,
+    <Step1_Datos
+      negocio={wiz.negocio}
+      setNegocio={wiz.setNegocio}
+      simData={wiz.simData}
+      setSimData={wiz.setSimData}
+      onNext={goNext}
+    />,
     <EnConstruccion num={2} onNext={goNext} onBack={goBack} />,
     <EnConstruccion num={3} onNext={goNext} onBack={goBack} />,
     <EnConstruccion num={4} onNext={goNext} onBack={goBack} />,

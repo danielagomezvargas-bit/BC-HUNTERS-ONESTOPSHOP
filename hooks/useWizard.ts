@@ -3,7 +3,7 @@ import { useState, useCallback } from "react";
 import type {
   Negocio, Productos, ProvData, ProvCounts,
   ShareState, ComOTRow, ComMSIRow,
-  SecKey, MsiPlazo,
+  SecKey, MsiPlazo, SimuladorData,
 } from "@/types";
 import { MSI_PLAZOS } from "@/data/constants";
 
@@ -67,6 +67,9 @@ export function useWizard() {
   // Paso 3
   const [provCounts, setProvCounts] = useState<ProvCounts>({ pt:1, op:1 });
   const [provData, setProvData] = useState<ProvData>({});
+
+  // Simulador cargado
+  const [simData, setSimData] = useState<SimuladorData | null>(null);
 
   // Paso 4
   const [sharePT, setSharePT] = useState<ShareState>(defaultSharePT);
@@ -158,6 +161,7 @@ export function useWizard() {
   return {
     step, goNext, goBack, goTo,
     negocio, setNegocio,
+    simData, setSimData,
     productos, setProductos,
     provCounts, setProvCounts,
     provData, updateProvData, getProvName,
