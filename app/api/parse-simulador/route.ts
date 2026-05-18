@@ -59,25 +59,22 @@ export async function POST(req: NextRequest) {
     let vc_op:         number | null = null;
     let vc_op_fila:    number | null = null;
 
-    sheet.eachRow((row, rowNum) => {
-      // The total/weighted-average row has BOTH "vc" and "dcc" in the same cell
-      // (e.g. "VC (%) con DCC"). Generic headers that only say "DCC" are skipped.
-      let hasLabel = false;
-      row.eachCell((cell) => {
+    // Step 1 — find which column carries the "VC (%) con DCC" header
+    // (the header row has text; the data rows have numbers in that same column)
+    let vcCol: number = 13; // default to col M
+    sheet.eachRow((row) => {
+      if (vcCol !== 13) return;
+      row.eachCell((cell, colNum) => {
         const txt = String(cell.value ?? "").trim().toLowerCase();
-        if (txt.includes("vc") && txt.includes("dcc")) hasLabel = true;
+        if (txt.includes("vc") && txt.includes("dcc")) vcCol = colNum;
       });
-      if (!hasLabel) return;
+    });
 
-      // Try col M (13) first; if null scan the row for the first valid percentage
-      let val = cellPct(sheet.getCell(rowNum, 13));
-      if (val === null) {
-        row.eachCell((cell) => {
-          if (val !== null) return;
-          const p = cellPct(cell);
-          if (p !== null && p > 0 && p <= 100) val = p;
-        });
-      }
+    // Step 2 — scan every row for a numeric value in vcCol
+    // The header row is skipped automatically (it has text, not a number)
+    sheet.eachRow((row, rowNum) => {
+      const val = cellPct(row.getCell(vcCol));
+      if (val === null || val <= 0 || val > 100) return;
 
       const section = detectSection(sheet, rowNum);
 
@@ -86,7 +83,7 @@ export async function POST(req: NextRequest) {
       } else if (section === "op" && vc_op === null) {
         vc_op = val; vc_op_fila = rowNum;
       } else if (section === null) {
-        // Can't determine section — assign by row order (OP appears first in the sheet)
+        // Fallback: OP section appears first (lower row number) in this sheet
         if (vc_op === null)         { vc_op    = val; vc_op_fila    = rowNum; }
         else if (vc_point === null) { vc_point = val; vc_point_fila = rowNum; }
       }
