@@ -89,6 +89,28 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    // Debug info: cells containing "vc" anywhere, and col M values for rows 10–95
+    const dbgVcCells: { fila: number; col: string; texto: string }[] = [];
+    const dbgColM:    { fila: number; valor: string; numFmt: string }[] = [];
+
+    sheet.eachRow((row, rowNum) => {
+      row.eachCell((cell, colNum) => {
+        const txt = String(cell.value ?? "").trim();
+        if (txt.toLowerCase().includes("vc")) {
+          const letter = colNum <= 26 ? String.fromCharCode(64 + colNum) : `C${colNum}`;
+          dbgVcCells.push({ fila: rowNum, col: letter, texto: txt.slice(0, 80) });
+        }
+      });
+      if (rowNum >= 10 && rowNum <= 95) {
+        const cell = row.getCell(13);
+        const raw  = cell.value;
+        let valor  = "";
+        if (typeof raw === "number") valor = String(raw);
+        else if (raw !== null && typeof raw === "object" && "result" in (raw as object)) valor = String((raw as any).result);
+        if (valor) dbgColM.push({ fila: rowNum, valor, numFmt: String((cell as any).numFmt ?? "") });
+      }
+    });
+
     return NextResponse.json({
       fileName:      file.name,
       sheetName:     sheet.name,
@@ -96,6 +118,7 @@ export async function POST(req: NextRequest) {
       vc_point_fila,
       vc_op,
       vc_op_fila,
+      _debug: { vcCol, dbgVcCells, dbgColM },
     });
   } catch {
     return NextResponse.json(

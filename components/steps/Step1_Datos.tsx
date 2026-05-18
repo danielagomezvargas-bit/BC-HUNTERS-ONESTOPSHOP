@@ -33,6 +33,7 @@ export default function Step1_Datos({ negocio, setNegocio, simData, setSimData, 
   const [bduLoading, setBduLoading] = useState(false);
   const [simLoading, setSimLoading] = useState(false);
   const [simErr,     setSimErr]     = useState<string | null>(null);
+  const [simDebug,   setSimDebug]   = useState<any>(null);
   const fileRef  = useRef<HTMLInputElement>(null);
   const [dragging, setDragging]    = useState(false);
 
@@ -60,11 +61,13 @@ export default function Step1_Datos({ negocio, setNegocio, simData, setSimData, 
     setSimLoading(true);
     setSimErr(null);
     setSimData(null);
+    setSimDebug(null);
     try {
       const form = new FormData();
       form.append("file", file);
       const res  = await fetch("/api/parse-simulador", { method: "POST", body: form });
       const json = await res.json();
+      if (json._debug) setSimDebug(json._debug);
       if (!res.ok) setSimErr(json.error || "Error al procesar el archivo.");
       else         setSimData(json as SimuladorData);
     } catch {
@@ -221,6 +224,34 @@ export default function Step1_Datos({ negocio, setNegocio, simData, setSimData, 
           <div style={{ background: "#FFF5F5", border: `1px solid #FFB3B3`, borderRadius: 8, padding: "12px 14px", marginTop: 12, fontSize: 12, color: C.red, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>⚠ {simErr}</span>
             <button onClick={() => setSimErr(null)} style={{ background: "none", border: "none", cursor: "pointer", color: C.muted, fontSize: 18, lineHeight: 1 }}>×</button>
+          </div>
+        )}
+
+        {/* Debug panel — visible when values not found */}
+        {simDebug && (!simData?.vc_point || !simData?.vc_op) && (
+          <div style={{ marginTop: 12, border: `1px solid #E0C060`, borderRadius: 8, overflow: "hidden" }}>
+            <div style={{ background: "#FFFBF0", padding: "8px 14px", fontSize: 11, fontWeight: 700, color: "#7A5C00" }}>
+              🔍 Debug — comparte esta info para corregir la extracción
+            </div>
+            <div style={{ padding: "10px 14px", fontSize: 11, fontFamily: "monospace", background: "#FEFCF0", maxHeight: 260, overflowY: "auto" }}>
+              <div style={{ marginBottom: 6, color: "#555" }}>
+                <strong>Columna detectada para VC:</strong> {simDebug.vcCol ?? "—"}
+              </div>
+              <div style={{ marginBottom: 4, color: "#555" }}><strong>Celdas con "vc" en su texto:</strong></div>
+              {simDebug.dbgVcCells?.length === 0
+                ? <div style={{ color: "#999" }}>ninguna</div>
+                : simDebug.dbgVcCells?.map((c: any, i: number) => (
+                  <div key={i} style={{ color: "#333" }}>{c.col}{c.fila}: "{c.texto}"</div>
+                ))
+              }
+              <div style={{ marginTop: 8, marginBottom: 4, color: "#555" }}><strong>Valores en col M (filas 10–95):</strong></div>
+              {simDebug.dbgColM?.length === 0
+                ? <div style={{ color: "#999" }}>ninguno</div>
+                : simDebug.dbgColM?.map((r: any, i: number) => (
+                  <div key={i} style={{ color: "#333" }}>M{r.fila}: {r.valor} {r.numFmt ? `[${r.numFmt}]` : ""}</div>
+                ))
+              }
+            </div>
           </div>
         )}
 
